@@ -15,7 +15,7 @@ function main() {
 }
 
 function list_packages() {
-    apt-cache dumpavail | awk '/^Package: / {print $2}' | head -n 25
+    apt-cache dumpavail | awk '/^Package: / {print $2}'
 }
 
 function download_manual_for_package() {
