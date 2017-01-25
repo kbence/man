@@ -17,8 +17,8 @@ function download_manual_for_package() {
 
         apt-get download "$pkg" >/dev/null
 
-        ar x *.deb
-        tar xf data.tar.*
+        ar x *.deb 2>/dev/null
+        tar xf data.tar.* 2>/dev/null
 
         if [[ -d usr/share/man ]]; then
             cp -rp usr/share/man/man* /usr/share/man
