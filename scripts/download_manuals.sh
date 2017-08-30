@@ -8,7 +8,7 @@ function main() {
     packages=$(list_packages)
     count=$(echo "$packages" | wc -l)
 
-    echo "$packages" | xargs -IPACKAGE -n1 -P12 /opt/download_manual_for_package.sh PACKAGE | \
+    echo "$packages" | xargs -IPACKAGE -n1 -P${THREADS:-4} /opt/download_manual_for_package.sh PACKAGE | \
         prepend_progress $count
 
     cleanup_utils
