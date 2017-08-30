@@ -1,4 +1,5 @@
-FROM ubuntu:xenial
+ARG VERSION=xenial
+FROM ubuntu:${VERSION}
 
 ENV DEBIAN_FRONTEND=noninteractive TERM=xterm
 COPY entrypoint.sh /entrypoint
