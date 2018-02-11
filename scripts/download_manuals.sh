@@ -1,34 +1,53 @@
 #!/usr/bin/env bash
 
+set -e
+
 function main() {
     local packages
     local count
 
-    init_utils
+    init
     packages=$(list_packages)
     count=$(echo "$packages" | wc -l)
 
-    echo "$packages" | xargs -IPACKAGE -n1 -P${THREADS:-4} /opt/download_manual_for_package.sh PACKAGE | \
+    echo "$packages" | xargs -n20 -P${THREADS:-4} /opt/download_manual_for_package.sh | \
         prepend_progress $count
 
-    cleanup_utils
+    cleanup
     rebuild_man_db
 }
 
-function init_utils() {
+function use_old_releases() {
+    sed -i 's/archive/old-releases/g' /etc/apt/sources.list
+}
+
+function for_lsb_codename() {
+    local lsb_codename="$1"; shift
+
+    echo "LSB_RELEASE: $(lsb_release -sc), LSB_CODENAME: $lsb_codename"
+
+    if [[ $(lsb_release -sc) == $lsb_codename ]]; then
+        "$@"
+    fi
+}
+
+function init() {
+    for_lsb_codename precise use_old_releases
+
     echo "Installing necessary utilities..."
+    apt-get update
     apt-get install -y binutils xz-utils apt-file
 
     echo 'Updating apt-file DB...'
     apt-file update
 }
 
-function cleanup_utils() {
+function cleanup() {
     echo "Cleaning up apt-file DB..."
     rm -rf /var/cache/apt/apt-file/*
 
-    echo "Purging utilities..."
-    apt-get purge -f --force-yes binutils xz-utils apt-file
+    echo "Purging caches..."
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
 }
 
 function list_packages() {

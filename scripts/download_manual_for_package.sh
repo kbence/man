@@ -1,35 +1,36 @@
 #!/usr/bin/env bash
 
 function main() {
-    download_manual_for_package "$1"
+    download_manual_for_package "$@"
 }
 
 function download_manual_for_package() {
-    local pkg=$1
     local tmpdir
     local msg=''
 
     (
-        msg="man pages for '$pkg'."
         tmpdir=$(mktemp -d)
         chmod 777 "$tmpdir"
         cd "$tmpdir"
 
-        apt-get download "$pkg" >/dev/null
+        apt-get download "$@" >/dev/null
 
-        ar x *.deb 2>/dev/null
-        tar xf data.tar.* 2>/dev/null
+        if ls | grep .deb >/dev/null; then
+            for f in *.deb; do
+                ar x "$f" 2>/dev/null
+                tar xf data.tar.* 2>/dev/null
+                rm -f data.tar.*
+            done
 
-        if [[ -d usr/share/man ]]; then
             cp -rp usr/share/man/man* /usr/share/man
-            msg="Installed $msg"
-        else
-            msg="Skipped $msg"
         fi
 
-        rm -rf $tmpdir
+        for pkg in "$@"; do
+            echo "Finished installing man pages for $pkg"
+        done
 
-        echo "$msg"
+        cd - >/dev/null
+        rm -rf $tmpdir
     )
 }
 
