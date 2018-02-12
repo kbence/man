@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+TAG=latest
+
+case "$1" in
+    -h|-help|--help)
+        echo "Usage:"
+        echo "    $0 [--<lsb_codename>] [arg [arg ...]]"
+        echo
+        exit 0
+        ;;
+    --*)
+        TAG=$(cut -c3- <<<"$1")
+        shift
+        ;;
+esac
+
+docker run -it --rm -e TERM="$TERM" kbence/man:$TAG "$@"

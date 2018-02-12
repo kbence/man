@@ -9,3 +9,7 @@ The image is currently built for all the supported LTS versions of Ubuntu (+prec
     docker run -it --rm -e TERM="$TERM" kbence/man:<lts_codename> <man_page>
 
 where lts_codename can be `precise`, `trusty`, `xenial`, `bionic`.
+
+To make it easier to use, there's a script called `lman` in the repository. This script will pass your `TERM` environment variable to optionally enable colorful output. It's usage is really simple:
+
+    ./lman [--<lsb_codename>] [arg [arg ...]]
