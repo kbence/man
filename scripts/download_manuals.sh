@@ -10,7 +10,7 @@ function main() {
     packages=$(list_packages)
     count=$(echo "$packages" | wc -l)
 
-    echo "$packages" | xargs -n20 -P${THREADS:-4} /opt/download_manual_for_package.sh | \
+    echo "$packages" | xargs -n20 -P${THREADS:-8} /opt/download_manual_for_package.sh | \
         prepend_progress $count
 
     cleanup
@@ -36,7 +36,7 @@ function init() {
 
     echo "Installing necessary utilities..."
     apt-get update
-    apt-get install -y binutils xz-utils apt-file
+    apt-get install -y --no-install-recommends binutils xz-utils apt-file
 
     echo 'Updating apt-file DB...'
     apt-file update
