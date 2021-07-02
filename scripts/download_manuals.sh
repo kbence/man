@@ -51,7 +51,7 @@ function cleanup() {
 }
 
 function list_packages() {
-    apt-file search /man/ | cut -d: -f1 | sort | uniq
+    apt-file search /man/ | awk -F: '!v[$1]++ {print $1}'
 }
 
 function prepend_progress() {
